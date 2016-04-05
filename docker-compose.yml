@@ -1,0 +1,12 @@
+version: "2"
+services:
+
+  javaimage:
+    container_name: javacli
+    build: build
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+      nproc: 65535
+    stdin_open: true
