@@ -8,6 +8,9 @@ ENV ENTRYKIT_VERSION=0.4.0
 ENV ENTRYKIT_FILE=entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz
 ENV ENTRYKIT_DOWNLOAD=https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/${ENTRYKIT_FILE}
 
+ENV GOSU_VERSION=1.7
+ENV GOSU_DOWNLOAD=https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64
+
 ENV PACKAGE='bash libstdc++' \
     DOWNLOAD_PACKAGE='wget git ca-certificates ' \
     LANG=C.UTF-8 \
@@ -20,7 +23,10 @@ RUN apk add --no-cache ${PACKAGE} && apk add --no-cache ${DOWNLOAD_PACKAGE} -t d
 RUN wget -q --no-check-certificate ${ENTRYKIT_DOWNLOAD} -O- | tar zx && \
     chmod +x /entrykit && mv /entrykit /bin && /bin/entrykit --symlink
 
-RUN apk del dlpack && rm -rf /tmp/* /var/cache/apk/*
+# gosu
+RUN wget -q --no-check-certificate ${GOSU_DOWNLOAD} -O /usr/bin/gosu && chmod +x /usr/bin/gosu
+
+RUN apk del dlpack --no-cache && rm -rf /tmp/* /var/cache/apk/*
 
 # add admin user
 RUN adduser -D -h /home/admin -s /bin/bash admin admin
