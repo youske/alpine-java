@@ -4,6 +4,10 @@
 FROM frolvlad/alpine-oraclejdk8:slim
 MAINTAINER youske miyakoshi <youske@gmail.com>
 
+LABEL com.geeplus.description="alpine oraclejdk8 image" \
+      com.geeplus.vendor="geeplus.inc" \
+      com.geeplus.role="baseimage"
+
 ENV ENTRYKIT_VERSION=0.4.0
 ENV ENTRYKIT_FILE=entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz
 ENV ENTRYKIT_DOWNLOAD=https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/${ENTRYKIT_FILE}
@@ -20,7 +24,7 @@ RUN apk add --no-cache ${PACKAGE} && apk add --no-cache ${DOWNLOAD_PACKAGE} -t d
 RUN wget -q --no-check-certificate ${ENTRYKIT_DOWNLOAD} -O- | tar zx && \
     chmod +x /entrykit && mv /entrykit /bin && /bin/entrykit --symlink
 
-RUN apk del dlpack && rm -rf /tmp/* /var/cache/apk/*
+RUN apk del dlpack --no-cache && rm -rf /tmp/* /var/cache/apk/*
 
 # add admin user
 RUN adduser -D -h /home/admin -s /bin/bash admin admin
