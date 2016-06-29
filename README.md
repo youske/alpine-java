@@ -1,2 +1,2 @@
-alpine linux java
-==================
+alpine linux with oraclejdk8
+============================
