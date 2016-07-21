@@ -1,9 +1,26 @@
 version: "2"
 services:
 
-  javaimage:
-    container_name: javacli
-    build: build
+  jdk8:
+    build: jdk8
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+      nproc: 65535
+    stdin_open: true
+
+  jdk7:
+    build: jdk7
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+      nproc: 65535
+    stdin_open: true
+
+  jdk9:
+    build: jdk9
     ulimits:
       nofile:
         soft: 20000

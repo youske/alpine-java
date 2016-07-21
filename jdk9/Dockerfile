@@ -1,9 +1,9 @@
-# Alpine Linux with java8
+# Alpine Linux with oraclejdk9
 
 FROM frolvlad/alpine-oraclejdk8:slim
 MAINTAINER youske miyakoshi <youske@gmail.com>
 
-LABEL com.geeplus.description="alpine oraclejdk8 image" \
+LABEL com.geeplus.description="alpine oraclejdk9 image" \
       com.geeplus.role="baseimage"
 
 # ----- common

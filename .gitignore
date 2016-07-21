@@ -5,6 +5,8 @@ tests/
 
 #
 .sync-config.cson
+.remote-sync.json
+.editorconfig
 .tags
 *.swp
 *.lck
