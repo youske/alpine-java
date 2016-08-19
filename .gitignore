@@ -19,6 +19,7 @@ Thumbs.db
 .tags
 *.swp
 *.lck
+*.lock
 *.*!
 *~
 

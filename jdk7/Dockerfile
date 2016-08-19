@@ -1,52 +1,59 @@
-# Alpine Linux with oraclejdk7
+# Alpine Linux jdk8
 
-FROM frolvlad/alpine-oraclejdk8:slim
+FROM youske/alpine-stdmachine:glibc
 MAINTAINER youske miyakoshi <youske@gmail.com>
 
-LABEL com.geeplus.description="alpine oraclejdk7 image" \
-      com.geeplus.role="baseimage"
+LABEL com.stdmachine.description="alpine jdk8 image" \
+      com.stdmachine.role="jdk8 image"
 
-# ----- common
+ENV JAVA_VERSION=8 \
+    JAVA_UPDATE=102 \
+    JAVA_BUILD=14 \
+    JAVA_HOME="/usr/lib/jvm/default-jvm"
 
-# s6-overlay
-ENV S6OVERLAY_VERSION="v1.11.0.1"
-ENV S6OVERLAY_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6OVERLAY_VERSION}/s6-overlay-amd64.tar.gz"
-ADD ${S6OVERLAY_URL} /tmp/
+WORKDIR /tmp
 
-ENV ENTRYKIT_VERSION=0.4.0
-ENV ENTRYKIT_FILE=entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz
-ENV ENTRYKIT_DOWNLOAD=https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/${ENTRYKIT_FILE}
+RUN wget -q --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
+      "http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION}u${JAVA_UPDATE}-b${JAVA_BUILD}/jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz" && \
+    tar -xzf "jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz" && \
+    mkdir -p "/usr/lib/jvm" && \
+    mv "/tmp/jdk1.${JAVA_VERSION}.0_${JAVA_UPDATE}" "/usr/lib/jvm/java-${JAVA_VERSION}-oracle" && \
+    ln -s "java-${JAVA_VERSION}-oracle" "$JAVA_HOME" && \
+    ln -s "$JAVA_HOME/bin/"* "/usr/bin/" && \
+    rm -rf "$JAVA_HOME/"*src.zip && \
+    rm -rf "$JAVA_HOME/lib/missioncontrol" \
+      "$JAVA_HOME/lib/visualvm" \
+      "$JAVA_HOME/lib/"*javafx* \
+      "$JAVA_HOME/jre/lib/plugin.jar" \
+      "$JAVA_HOME/jre/lib/ext/jfxrt.jar" \
+      "$JAVA_HOME/jre/bin/javaws" \
+      "$JAVA_HOME/jre/lib/javaws.jar" \
+      "$JAVA_HOME/jre/lib/desktop" \
+      "$JAVA_HOME/jre/plugin" \
+      "$JAVA_HOME/jre/lib/"deploy* \
+      "$JAVA_HOME/jre/lib/"*javafx* \
+      "$JAVA_HOME/jre/lib/"*jfx* \
+      "$JAVA_HOME/jre/lib/amd64/libdecora_sse.so" \
+      "$JAVA_HOME/jre/lib/amd64/"libprism_*.so \
+      "$JAVA_HOME/jre/lib/amd64/libfxplugins.so" \
+      "$JAVA_HOME/jre/lib/amd64/libglass.so" \
+      "$JAVA_HOME/jre/lib/amd64/libgstreamer-lite.so" \
+      "$JAVA_HOME/jre/lib/amd64/"libjavafx*.so \
+      "$JAVA_HOME/jre/lib/amd64/"libjfx*.so && \
+    rm -rf "$JAVA_HOME/jre/bin/jjs" \
+      "$JAVA_HOME/jre/bin/keytool" \
+      "$JAVA_HOME/jre/bin/orbd" \
+      "$JAVA_HOME/jre/bin/pack200" \
+      "$JAVA_HOME/jre/bin/policytool" \
+      "$JAVA_HOME/jre/bin/rmid" \
+      "$JAVA_HOME/jre/bin/rmiregistry" \
+      "$JAVA_HOME/jre/bin/servertool" \
+      "$JAVA_HOME/jre/bin/tnameserv" \
+      "$JAVA_HOME/jre/bin/unpack200" \
+      "$JAVA_HOME/jre/lib/ext/nashorn.jar" \
+      "$JAVA_HOME/jre/lib/jfr.jar" \
+      "$JAVA_HOME/jre/lib/jfr" \
+      "$JAVA_HOME/jre/lib/oblique-fonts" && \
+    rm -rf "/tmp/"* /var/apk/cache/*
 
-ENV GOSU_VERSION=1.7
-ENV GOSU_DOWNLOAD=https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64
-
-ENV PACKAGE='bash wget ca-certificates' \
-    BUILD_PACKAGE='git build-base musl-dev linux-headers' \
-    LANG=C.UTF-8 \
-    WORK_DIR=/home/admin
-
-# add admin user
-RUN adduser -D -h /home/admin -s /bin/bash admin admin
-
-# apk install
-RUN apk upgrade --no-cache && \
-    apk add --no-cache ${PACKAGE} && \
-    apk add --no-cache ${BUILD_PACKAGE} -t buildpack
-
-# entrykit install
-RUN wget -q --no-check-certificate ${ENTRYKIT_DOWNLOAD} -O- | tar zx && \
-    chmod +x /entrykit && mv /entrykit /usr/bin && /usr/bin/entrykit --symlink
-
-# gosu
-RUN wget -q --no-check-certificate ${GOSU_DOWNLOAD} -O /usr/bin/gosu && chmod +x /usr/bin/gosu
-
-# s6-overlay
-RUN tar zxf /tmp/s6-overlay-amd64.tar.gz -C /
-
-RUN mkdir -p /workdir
-
-RUN apk del buildpack --no-cache && rm -rf /tmp/* /var/cache/apk/*
-
-WORKDIR ${WORK_DIR}
-ENTRYPOINT ["switch","shell=su admin -c /bin/bash","--","switch","root=/bin/bash","--","/init"]
-CMD ["su","admin","-c","/bin/bash"]
+WORKDIR /
