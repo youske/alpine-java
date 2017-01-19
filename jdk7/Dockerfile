@@ -12,7 +12,6 @@ ENV JAVA_VERSION=8 \
     JAVA_HOME="/usr/lib/jvm/default-jvm"
 
 WORKDIR /tmp
-
 RUN wget -q --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
       "http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION}u${JAVA_UPDATE}-b${JAVA_BUILD}/jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz" && \
     tar -xzf "jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz" && \
@@ -56,4 +55,4 @@ RUN wget -q --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
       "$JAVA_HOME/jre/lib/oblique-fonts" && \
     rm -rf "/tmp/"* /var/apk/cache/*
 
-WORKDIR /
+WORKDIR /workdir

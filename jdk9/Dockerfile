@@ -56,4 +56,4 @@ RUN wget -q --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
       "$JAVA_HOME/jre/lib/oblique-fonts" && \
     rm -rf "/tmp/"* /var/apk/cache/*
 
-WORKDIR /
+WORKDIR /workdir
